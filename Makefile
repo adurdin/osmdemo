@@ -60,8 +60,9 @@ LIBS = -l$(LGLIB) -luuid -lstdc++
 INCLUDES = -I$(LGDIR)
 # If you care for this... # -Wno-unused-variable 
 # A lot of the callbacks have unused parameters, so I turn that off.
-CXXFLAGS =  -W -Wall -std=c++11 -masm=att \
-	    -fno-pcc-struct-return -mms-bitfields
+CXXFLAGS =  -W -Wall -Wno-unused-parameter \
+		-std=c++11 -masm=att \
+		-fno-pcc-struct-return -mms-bitfields
 DLLFLAGS =  --target i386-mingw32
 
 all: empty.osm echo.osm demo.osm
