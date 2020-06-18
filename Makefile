@@ -22,6 +22,7 @@
 ##
 ###############################################################################
 
+.PHONY: all clean
 
 .SUFFIXES:
 .SUFFIXES: .o .cpp .rc 
@@ -31,16 +32,12 @@ srcdir = .
 
 GAME = 2
 
-LGDIR = ..
+LGDIR = liblg
 
 CC = gcc
 CXX = g++
 AR = ar
 DLLWRAP = dllwrap
-RC = windres
-# GNU ar updates the symbols automatically.
-# Set this if you need to do it yourself
-RANLIB = echo
 
 DEFINES = -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN -D_DARKGAME=$(GAME)
 
@@ -48,33 +45,36 @@ ifdef DEBUG
 DEFINES := $(DEFINES) -D_DEBUG 
 CXXDEBUG = -g -O0
 LDDEBUG = -g
-LGLIB = -llg-d
+LGLIB = lg-d
 else
 DEFINES := $(DEFINES) -DNDEBUG
 CXXDEBUG = -O3 
 LDDEBUG =
-LGLIB = -llg
+LGLIB = lg
 endif
 
 ARFLAGS = rc
 LDFLAGS = -mwindows -mdll -Wl,--enable-auto-image-base 
-LIBDIRS = -L. -L$(LGDIR) 
-LIBS = $(LGLIB) -luuid -lstdc++
-INCLUDES = -I. -I$(srcdir) -I$(LGDIR)
+LIBDIRS = -L$(LGDIR) 
+LIBS = -l$(LGLIB) -luuid -lstdc++
+INCLUDES = -I$(LGDIR)
 # If you care for this... # -Wno-unused-variable 
 # A lot of the callbacks have unused parameters, so I turn that off.
 CXXFLAGS =  -W -Wall -masm=att \
 	    -fno-pcc-struct-return -mms-bitfields
 DLLFLAGS =  --target i386-mingw32
 
+all: empty.osm echo.osm demo.osm
+
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(CXXDEBUG) $(DEFINES) $(INCLUDES) -o $@ -c $<
 
-%.osm: %.o ScriptModule.o Script.o
+%.osm: %.o ScriptModule.o Script.o  $(LGDIR)/$(LGLIB).a
 	$(DLLWRAP) $(DLLFLAGS) --def script.def -o $@ $< ScriptModule.o Script.o $(LDFLAGS) $(LDDEBUG) $(LIBDIRS) $(LIBS)
 
-all:
+$(LGDIR)/$(LGLIB).a:
+	$(MAKE) -C $(LGDIR)
 
 clean:
 	$(RM) *.o *.osm
-
+	$(MAKE) -C $(LGDIR) clean

@@ -1,5 +1,7 @@
 # Makefile for lg library
 
+.PHONY: all clean
+
 .SUFFIXES:
 .SUFFIXES: .o .cpp
 
@@ -15,12 +17,10 @@ AR = ar
 # GNU ar updates the symbols automatically.
 # Set this if you need to do it yourself
 RANLIB = echo
-DLLWRAP = dllwrap
 
 DEFINES = -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN
 
 ARFLAGS = rc
-LDFLAGS = -mwindows -L.
 LIBS = -lstdc++ -luuid
 INCLUDEDIRS = -I. -I$(srcdir)
 # If you care for this... # -Wno-unused-variable 
@@ -28,8 +28,6 @@ INCLUDEDIRS = -I. -I$(srcdir)
 CXXFLAGS =  -W -Wall -Wno-unused-parameter -Wno-pmf-conversions \
 			$(INCLUDEDIRS) -masm=att \
 			-fno-pcc-struct-return -mms-bitfields
-LDFLAGS = -mwindows -L. -llg
-DLLFLAGS = --def script.def --add-underscore --target i386-mingw32
 
 ifdef DEBUG
 CXXDEBUG = -g -DDEBUG 
@@ -53,14 +51,10 @@ LG_OBJSD = lg-d.o scrmsgs-d.o iids.o
 	$(CC) $(CXXFLAGS) $(CXXDEBUG) $(DEFINES) -o $@ -c $<
 
 
-ALL:	$(LG_LIB) $(LG_LIBD)
+all: $(LG_LIB) $(LG_LIBD)
 
 clean:
-	$(RM) $(LG_OBJS)
-
-stamp:
-	$(RM) lg/stamp-*
-	$(SH) timestamp.sh lg lg $(LG_SRCS)
+	$(RM) $(LG_OBJS) $(LG_OBJSD) $(LG_LIB) $(LG_LIBD)
 
 $(LG_LIB): $(LG_OBJS)
 	$(AR) $(ARFLAGS) $@ $?
@@ -71,13 +65,6 @@ $(LG_LIBD): LDDEBUG = -g
 $(LG_LIBD): $(LG_OBJSD)
 	$(AR) $(ARFLAGS) $@ $?
 	-@ ($(RANLIB) $@ || true) >/dev/null 2>&1
-
-dump.o: dump.cpp
-	$(CC) $(CXXFLAGS) -g -DDEBUG $(DEFINES) -o $@ -c $<
-
-dump.osm: dump.o $(LG_LIBD)
-	$(DLLWRAP) $(DLLFLAGS) -o $@ dump.o $(LDFLAGS) -g $(LIBS)
-
 
 iids.o: iids.cpp
 lg.o: lg.cpp lg/types.h lg/dynarray.h lg/dynarray.hpp
