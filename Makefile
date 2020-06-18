@@ -70,10 +70,10 @@ all: empty.osm echo.osm demo.osm
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(CXXDEBUG) $(DEFINES) $(INCLUDES) -o $@ -c $<
 
-%.osm: %.o ScriptModule.o Script.o  $(LGDIR)/$(LGLIB).a
+%.osm: %.o ScriptModule.o Script.o $(LGDIR)/lib$(LGLIB).a
 	$(DLLWRAP) $(DLLFLAGS) --def script.def -o $@ $< ScriptModule.o Script.o $(LDFLAGS) $(LDDEBUG) $(LIBDIRS) $(LIBS)
 
-$(LGDIR)/$(LGLIB).a:
+$(LGDIR)/lib$(LGLIB).a:
 	$(MAKE) -C $(LGDIR)
 
 clean:
