@@ -26,7 +26,7 @@ INCLUDEDIRS = -I. -I$(srcdir)
 # If you care for this... # -Wno-unused-variable 
 # A lot of the callbacks have unused parameters, so I turn that off.
 CXXFLAGS =  -W -Wall -Wno-unused-parameter -Wno-pmf-conversions \
-			$(INCLUDEDIRS) -masm=att \
+			$(INCLUDEDIRS) -std=c++11 -masm=att \
 			-fno-pcc-struct-return -mms-bitfields
 
 ifdef DEBUG
