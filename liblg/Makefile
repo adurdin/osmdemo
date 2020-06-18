@@ -18,7 +18,7 @@ AR = ar
 # Set this if you need to do it yourself
 RANLIB = echo
 
-DEFINES = -DWINVER=0x0400 -D_WIN32_WINNT=0x0400 -DWIN32_LEAN_AND_MEAN
+DEFINES = -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -DWIN32_LEAN_AND_MEAN
 
 ARFLAGS = rc
 LIBS = -lstdc++ -luuid
