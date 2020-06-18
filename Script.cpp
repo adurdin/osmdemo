@@ -24,6 +24,7 @@
 #include "Script.h"
 
 #include <cstring>
+#include <strings.h>
 
 using namespace std;
 
